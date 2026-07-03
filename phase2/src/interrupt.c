@@ -71,7 +71,7 @@ void dtpHandler(int type){
 }
 
 void terminalHandler(){
-    int i, status, device_nr;
+    int i = -1, status, device_nr;
     termreg_t* term;
     memaddr* interrupt_bitmap = (memaddr*) CDEV_BITMAP_ADDR(INT_TERMINAL);
 
@@ -87,6 +87,8 @@ void terminalHandler(){
         i = DEV_PER_INT * (INT_TERMINAL - 3 + 1) + device_nr;
         status = term->transm_status;
         term->transm_command = CMD_ACK;
+    } else {
+        PANIC();
     }
     if(dev_sem[i] < 0){
         pcb_t *free = headBlocked(&dev_sem[i]);

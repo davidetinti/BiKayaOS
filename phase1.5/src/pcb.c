@@ -30,6 +30,8 @@ pcb_t *allocPcb(void){
     deleted->p_parent = NULL;
     deleted->p_semkey = NULL;
     deleted->priority = 0;
+    INIT_LIST_HEAD(&deleted->p_child);
+    INIT_LIST_HEAD(&deleted->p_sib);
     return deleted;
 }
 
@@ -73,7 +75,7 @@ pcb_t *removeProcQ(struct list_head *head){
 
 pcb_t *outProcQ(struct list_head *head, pcb_t *p){
     if(emptyProcQ(head)){
-        return FALSE;
+        return NULL;
     } else {
         if(p == NULL){
             return NULL;
@@ -111,8 +113,8 @@ void insertChild(pcb_t *prnt, pcb_t *p){
     if (prnt != NULL && p != NULL){
         if (emptyChild(prnt)) INIT_LIST_HEAD(&prnt->p_child);
         list_add_tail(&p->p_sib, &prnt->p_child);
+        p->p_parent = prnt;
     }
-    p->p_parent = prnt;
 }
 
 struct pcb_t *outChild(struct pcb_t *p) {

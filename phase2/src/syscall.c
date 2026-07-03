@@ -64,10 +64,9 @@ void getCpuTime(unsigned int *user, unsigned int *kernel, unsigned int *wallcloc
 
 void createProcess(state_t *statep, int priority, void **cpid){
     struct pcb_t *proc_blk;
-    if((proc_blk = allocPcb()) == NULL || statep == NULL){
-        if (current != NULL) current->p_s.RET_VAL = -1;
-        return;
-    }
+    proc_blk = allocPcb();
+    if (proc_blk == NULL) { if (current != NULL) current->p_s.RET_VAL = -1; return; }
+    if (statep == NULL)   { freePcb(proc_blk); if (current != NULL) current->p_s.RET_VAL = -1; return; }
     copyState(statep, &proc_blk->p_s);
     // Inserisce l'indirizzo del processo nella mappa dei processi attivi
     proc_map[0]++;
@@ -89,24 +88,20 @@ void createProcess(state_t *statep, int priority, void **cpid){
 }
 
 void recursiveTermination(pcb_t* root){
-    if (!emptyChild(root)){
-        struct list_head *iterator;
-        list_for_each(iterator, &root->p_child){
-            pcb_t *child = container_of(iterator, pcb_t, p_sib);
-            list_del(&child->p_sib);
-            recursiveTermination(child);
-        }
+    while (!emptyChild(root)){
+        pcb_t *child = container_of(root->p_child.next, pcb_t, p_sib);
+        recursiveTermination(child);
     }
     if (root->p_semkey != NULL){
         (*root->p_semkey)++;
         outBlocked(root);
     }
     outChild(root);
-    freePcb(root);
     proc_map[root->pid] = proc_map[proc_map[0]];
     ((pcb_t*)proc_map[proc_map[0]])->pid = root->pid;
     proc_map[proc_map[0]] = 0;
     proc_map[0]--;
+    freePcb(root);
     return;
 }
 

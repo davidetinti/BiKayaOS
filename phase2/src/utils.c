@@ -109,8 +109,10 @@ unsigned deviceIndex(unsigned *reg, int subdevice){
     } else if (address >= FIRST_ADDR_DISK){
         address -= FIRST_ADDR_DISK;
         dev_line = INT_DISK;
+    } else {
+        PANIC();
     }
-    dev_pos = address/10;
+    dev_pos = address / 16;
     return (dev_line - 3) * 8 + dev_pos;
 }
 
