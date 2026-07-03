@@ -90,6 +90,7 @@ void terminalHandler(){
     } else {
         PANIC();
     }
+    if (i < 0) return;
     if(dev_sem[i] < 0){
         pcb_t *free = headBlocked(&dev_sem[i]);
         verhogen(&dev_sem[i]);
