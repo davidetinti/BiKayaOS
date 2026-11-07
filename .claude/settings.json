@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh pr * --repo davidetinti/*)",
+      "Bash(gh pr * --repo davidetinti-apps/*)",
+      "Bash(gh run * --repo davidetinti/*)",
+      "Bash(gh run * --repo davidetinti-apps/*)",
+      "Bash(git branch -d *)",
+      "Bash(git push origin --delete *)"
+    ]
+  }
+}
